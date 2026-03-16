@@ -45,6 +45,7 @@ const App: React.FC = () => {
   const [cloudReachable, setCloudReachable] = useState(false);
   const [cloudMessage, setCloudMessage] = useState('Not checked');
   const [localFallbackEnabled, setLocalFallbackEnabled] = useState(true);
+  const [focusMode, setFocusMode] = useState(false);
   const lastRoutedTranscript = useRef<string>('');
   const lastRouteAt = useRef<number>(0);
   const routeInFlight = useRef(false);
@@ -169,15 +170,22 @@ const App: React.FC = () => {
       setLiveRecording(!!customEvent.detail?.recording);
     };
 
+    const onFocusModeChanged = (event: Event) => {
+      const customEvent = event as CustomEvent<{ focusMode?: boolean }>;
+      setFocusMode(!!customEvent.detail?.focusMode);
+    };
+
     window.addEventListener('live-agent:user-transcript', onUserTranscript as EventListener);
     window.addEventListener('live-agent:model-response', onModelResponse as EventListener);
     window.addEventListener('live-agent:session-status', onSessionStatus as EventListener);
     window.addEventListener('live-agent:recording', onRecordingState as EventListener);
+    window.addEventListener('live-agent:focus-mode-changed', onFocusModeChanged as EventListener);
     return () => {
       window.removeEventListener('live-agent:user-transcript', onUserTranscript as EventListener);
       window.removeEventListener('live-agent:model-response', onModelResponse as EventListener);
       window.removeEventListener('live-agent:session-status', onSessionStatus as EventListener);
       window.removeEventListener('live-agent:recording', onRecordingState as EventListener);
+      window.removeEventListener('live-agent:focus-mode-changed', onFocusModeChanged as EventListener);
     };
   }, [autoRouteEnabled, handleRouteRequest, minTranscriptLength, onArtifactCreated]);
 
@@ -266,6 +274,7 @@ const App: React.FC = () => {
   return (
     <div className="app-root">
       <OrbShellLayout
+        focusMode={focusMode}
         left={
           <WorkflowPanel
             stage={stage}
@@ -279,6 +288,13 @@ const App: React.FC = () => {
             cloudHealthMessage={cloudMessage}
             localFallbackEnabled={localFallbackEnabled}
             onToggleLocalFallback={setLocalFallbackEnabled}
+            focusMode={focusMode}
+            onToggleFocusMode={() => {
+              const next = !focusMode;
+              window.dispatchEvent(
+                new CustomEvent('live-agent:focus-mode-changed', { detail: { focusMode: next } }),
+              );
+            }}
           />
         }
         center={<div dangerouslySetInnerHTML={{ __html: '<gdm-live-audio></gdm-live-audio>' }} style={{width: '100%', height: '100%'}} />}

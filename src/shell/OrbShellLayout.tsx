@@ -5,11 +5,12 @@ interface OrbShellLayoutProps {
   center: React.ReactNode;
   right: React.ReactNode;
   bottom: React.ReactNode;
+  focusMode?: boolean;
 }
 
-export const OrbShellLayout: React.FC<OrbShellLayoutProps> = ({ left, center, right, bottom }) => {
+export const OrbShellLayout: React.FC<OrbShellLayoutProps> = ({ left, center, right, bottom, focusMode }) => {
   return (
-    <div className="orb-layout">
+    <div className={`orb-layout${focusMode ? ' orb-layout--focus' : ''}`}>
       <aside className="orb-panel orb-panel-left">{left}</aside>
       <main className="orb-panel orb-panel-center">{center}</main>
       <aside className="orb-panel orb-panel-right">{right}</aside>

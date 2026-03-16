@@ -13,6 +13,8 @@ interface WorkflowPanelProps {
   cloudHealthMessage: string;
   localFallbackEnabled: boolean;
   onToggleLocalFallback: (enabled: boolean) => void;
+  focusMode?: boolean;
+  onToggleFocusMode?: () => void;
 }
 
 export const WorkflowPanel: React.FC<WorkflowPanelProps> = ({
@@ -27,12 +29,26 @@ export const WorkflowPanel: React.FC<WorkflowPanelProps> = ({
   cloudHealthMessage,
   localFallbackEnabled,
   onToggleLocalFallback,
+  focusMode,
+  onToggleFocusMode,
 }) => {
   const [goal, setGoal] = useState('');
 
   return (
     <div className="shell-card">
-      <h2>Workflow</h2>
+      <div className="shell-card-header">
+        <h2>Workflow</h2>
+        {onToggleFocusMode && (
+          <button
+            type="button"
+            className="compact-btn"
+            onClick={onToggleFocusMode}
+            title={focusMode ? 'Exit focus mode' : 'Focus mode'}
+          >
+            {focusMode ? '⊠ Exit Focus' : '⊡ Focus'}
+          </button>
+        )}
+      </div>
       <p className="muted">Current stage: {stage}</p>
       <div className="workflow-settings">
         <label className="setting-row">
