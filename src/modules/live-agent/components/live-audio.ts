@@ -20,7 +20,6 @@ export class GdmLiveAudio extends LitElement {
   @state() useDynamicColors = true;
   @state() useSmoothAnimations = true;
   @state() showSettings = false;
-  @state() focusMode = false;
 
   private client: GoogleGenAI;
   private session: Session;
@@ -283,47 +282,6 @@ export class GdmLiveAudio extends LitElement {
         height: 16px;
       }
 
-      .icon.focus,
-      .icon.focus-exit {
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(216, 244, 255, 0.9);
-        border-radius: 3px;
-        position: relative;
-      }
-
-      .icon.focus::before {
-        content: '';
-        position: absolute;
-        inset: 3px;
-        border: 2px solid rgba(216, 244, 255, 0.7);
-        border-radius: 1px;
-      }
-
-      .icon.focus-exit::before,
-      .icon.focus-exit::after {
-        content: '';
-        position: absolute;
-        background: rgba(216, 244, 255, 0.9);
-        border-radius: 1px;
-      }
-
-      .icon.focus-exit::before {
-        width: 10px;
-        height: 2px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(45deg);
-      }
-
-      .icon.focus-exit::after {
-        width: 10px;
-        height: 2px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-45deg);
-      }
-
       @media (max-width: 1100px) {
         .hud-title h1 {
           font-size: 28px;
@@ -348,21 +306,12 @@ export class GdmLiveAudio extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('keydown', this.handleGlobalKeydown);
-    window.addEventListener('live-agent:focus-mode-changed', this._onExternalFocusChange);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('keydown', this.handleGlobalKeydown);
-    window.removeEventListener('live-agent:focus-mode-changed', this._onExternalFocusChange);
   }
-
-  private _onExternalFocusChange = (event: Event) => {
-    const customEvent = event as CustomEvent<{ focusMode?: boolean }>;
-    if (typeof customEvent.detail?.focusMode === 'boolean') {
-      this.focusMode = customEvent.detail.focusMode;
-    }
-  };
 
   private handleGlobalKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' && this.showSettings) {
@@ -388,7 +337,7 @@ export class GdmLiveAudio extends LitElement {
   private async initClient() {
     this.initAudio();
     this.client = new GoogleGenAI({
-      apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+      apiKey: import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyDqQhl48itATTX3DkYxD_L2Czdl5z7Is5Y',
     });
 
     this.outputNode.connect(this.outputAudioContext.destination);
@@ -644,11 +593,6 @@ Key Quotes/Philosophy:
     this.updateStatus('Session cleared.');
   }
 
-  private _toggleFocusMode() {
-    this.focusMode = !this.focusMode;
-    this.emitLiveEvent('live-agent:focus-mode-changed', { focusMode: this.focusMode });
-  }
-
   render() {
     return html`
       <div class="orb-stage">
@@ -658,9 +602,6 @@ Key Quotes/Philosophy:
         </div>
 
         <div class="top-actions">
-          <button @click=${() => this._toggleFocusMode()} title="${this.focusMode ? 'Exit focus mode' : 'Focus mode'}">
-            <span class="icon ${this.focusMode ? 'focus-exit' : 'focus'} small"></span>
-          </button>
           <button @click=${() => (this.showSettings = !this.showSettings)} title="Visual settings">
             <span class="icon gear small"></span>
           </button>
