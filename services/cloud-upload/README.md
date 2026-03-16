@@ -69,6 +69,6 @@ gcloud run deploy cloud-upload-service \
 Set this in root frontend `.env.local`:
 
 ```env
-CLOUD_PERSIST_ENDPOINT=https://<cloud-run-url>/artifacts/upload
-CLOUD_PERSIST_API_KEY=your-secret-upload-key
+VITE_CLOUD_PERSIST_ENDPOINT=https://<cloud-run-url>/artifacts/upload
+VITE_CLOUD_PERSIST_API_KEY=your-secret-upload-key
 ```

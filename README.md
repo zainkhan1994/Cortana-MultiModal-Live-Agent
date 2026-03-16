@@ -60,7 +60,7 @@ An integrated multimodal hackathon platform combining:
 2. Configure env:
    - copy `.env.example` -> `.env`
 3. Set at least:
-   - `GEMINI_API_KEY`
+   - `VITE_GEMINI_API_KEY`
 4. Run:
    - `npm run dev`
 5. Open:
@@ -72,9 +72,9 @@ An integrated multimodal hackathon platform combining:
 
 ### Root app (`.env`)
 
-- `GEMINI_API_KEY` - required for Gemini Live + generation
-- `CLOUD_PERSIST_ENDPOINT` - optional upload endpoint (`/artifacts/upload`)
-- `CLOUD_PERSIST_API_KEY` - optional API key header (`x-upload-api-key`)
+- `VITE_GEMINI_API_KEY` - required for Gemini Live + generation
+- `VITE_CLOUD_PERSIST_ENDPOINT` - optional upload endpoint (`/artifacts/upload`)
+- `VITE_CLOUD_PERSIST_API_KEY` - optional API key header (`x-upload-api-key`)
 
 ### Upload service (`services/cloud-upload/.env`)
 
@@ -120,7 +120,7 @@ Endpoints:
 ## Cloud Deploy Notes
 
 You can deploy `services/cloud-upload` to Cloud Run and point:
-- `CLOUD_PERSIST_ENDPOINT=https://<service-url>/artifacts/upload`
+- `VITE_CLOUD_PERSIST_ENDPOINT=https://<service-url>/artifacts/upload`
 
 Important:
 - Some org policies block public Cloud Run (`allUsers` invoker)

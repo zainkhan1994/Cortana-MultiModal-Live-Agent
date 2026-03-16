@@ -16,17 +16,22 @@ export const useWorkflowCoordinator = () => {
       return prev.map((p) => (p.id === task.id ? task : p));
     });
 
-    if (task.status === 'running') {
+    if (task.status === 'queued') {
+      setStage('task-distribution');
+    } else if (task.status === 'running') {
       setStage('content-creation');
     } else if (task.status === 'completed') {
       setStage('real-time-feedback');
-    } else if (task.status === 'queued') {
-      setStage('task-distribution');
+    } else if (task.status === 'failed') {
+      setStage('real-time-feedback');
     }
   }, []);
 
   const onArtifactCreated = useCallback((artifact: Artifact) => {
     setArtifacts((prev) => [artifact, ...prev]);
+    if (artifact.kind === 'image' || artifact.kind === 'video' || artifact.kind === 'interleaved-output') {
+      setStage('digital-action');
+    }
   }, []);
 
   return useMemo(
