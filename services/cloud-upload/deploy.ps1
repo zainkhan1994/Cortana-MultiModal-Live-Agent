@@ -54,4 +54,4 @@ $serviceUrl = gcloud run services describe $ServiceName --region $Region --forma
 Write-Host ""
 Write-Host "Deployment complete." -ForegroundColor Green
 Write-Host "Service URL: $serviceUrl"
-Write-Host "Frontend CLOUD_PERSIST_ENDPOINT: $serviceUrl/artifacts/upload"
+Write-Host "Frontend VITE_CLOUD_PERSIST_ENDPOINT: $serviceUrl/artifacts/upload"

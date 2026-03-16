@@ -226,7 +226,7 @@ const App: React.FC = () => {
         mode: 'local' as const,
         title: 'Local-first mode',
         message: 'Your creations are safe and available on this device right away.',
-        hint: 'Add CLOUD_PERSIST_ENDPOINT anytime to enable cloud sync.',
+        hint: 'Add VITE_CLOUD_PERSIST_ENDPOINT anytime to enable cloud sync.',
       };
     }
     if (cloudChecked && !cloudReachable) {
