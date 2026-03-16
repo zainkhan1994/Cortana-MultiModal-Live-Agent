@@ -1,11 +1,19 @@
-# ORB Integrated Agent Platform
+# Cortana — Multimodal Live Agent
 
 An integrated multimodal hackathon platform combining:
 
-- `Live Agent` (real-time voice interaction with ORB visualization)
+- `Live Agent` (real-time voice interaction with Cortana HUD + 3D visualization)
 - `Creative Storyteller` (image + video generation pipeline)
 - `Workflow Orchestration` (task routing, artifact tracking, sync status)
 - `UI Navigator` (placeholder module for future phase)
+
+---
+
+## Live Demo
+
+**[https://zainkhan1994.github.io/Cortana-MultiModal-Live-Agent/](https://zainkhan1994.github.io/Cortana-MultiModal-Live-Agent/)**
+
+> Pushing to `main` auto-deploys to GitHub Pages via the included CI workflow.
 
 ---
 
@@ -88,7 +96,38 @@ An integrated multimodal hackathon platform combining:
 
 ---
 
-## Cloud Persistence Modes
+## GitHub Pages Deployment
+
+The app auto-deploys to **GitHub Pages** on every push to `main`.
+
+### Required GitHub repo settings
+
+1. Go to **Settings → Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Save.
+
+### Required GitHub Actions secrets
+
+Go to **Settings → Secrets and variables → Actions** and add:
+
+| Secret | Required | Description |
+|---|---|---|
+| `VITE_GEMINI_API_KEY` | ✅ Yes | Google Gemini API key (injected at build time) |
+| `VITE_CLOUD_PERSIST_ENDPOINT` | Optional | Cloud Run upload endpoint |
+| `VITE_CLOUD_PERSIST_API_KEY` | Optional | Upload service API key |
+
+> **Note:** `VITE_*` secrets are inlined into the JS bundle at build time (standard Vite behaviour). They are not server-side secrets. Use a backend proxy if you need stricter key protection.
+
+### Deployment workflow
+
+The workflow file is at `.github/workflows/deploy.yml`. It:
+1. Checks out the repo.
+2. Installs dependencies with `npm ci`.
+3. Runs `npm run build` (injects env secrets).
+4. Uploads `dist/` as a GitHub Pages artifact.
+5. Deploys it to `https://zainkhan1994.github.io/Cortana-MultiModal-Live-Agent/`.
+
+---
 
 The app supports three sync states:
 

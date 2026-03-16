@@ -337,6 +337,39 @@ body,
   text-decoration: underline;
 }
 
+/* ── Focus mode: hide side panels, expand center ── */
+.orb-layout--focus .orb-panel-left,
+.orb-layout--focus .orb-panel-right {
+  display: none;
+}
+
+.orb-layout--focus {
+  grid-template-columns: 0 1fr 0;
+}
+
+.orb-layout--focus .orb-panel-center {
+  grid-column: 1 / 4;
+}
+
+.orb-layout--focus .orb-panel-bottom {
+  grid-column: 1 / 4;
+}
+
+/* ── Premium panel header styling ── */
+.shell-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.shell-card-header h2 {
+  margin: 0;
+  color: #c8ebff;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
 @media (max-width: 1280px) {
   .orb-layout {
     grid-template-columns: 280px 1fr;
