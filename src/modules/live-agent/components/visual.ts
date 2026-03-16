@@ -38,7 +38,7 @@ export class GdmLiveAudioVisuals extends LitElement {
   }
 
   private canvas: HTMLCanvasElement;
-  private canvasCtx: CanvasRenderingContext2D;
+  private canvasCtx: CanvasRenderingContext2D | null = null;
 
   static styles = css`
     canvas {
@@ -53,7 +53,7 @@ export class GdmLiveAudioVisuals extends LitElement {
   }
 
   private visualize() {
-    if (this.canvas && this.outputAnalyser) {
+    if (this.canvas && this.canvasCtx && this.outputAnalyser) {
       const canvas = this.canvas;
       const canvasCtx = this.canvasCtx;
       const WIDTH = canvas.width;
@@ -95,14 +95,16 @@ export class GdmLiveAudioVisuals extends LitElement {
     requestAnimationFrame(() => this.visualize());
   }
 
-  private firstUpdated() {
-    this.canvas = this.shadowRoot!.querySelector('canvas');
+  protected firstUpdated() {
+    this.canvas = this.shadowRoot!.querySelector('canvas') as HTMLCanvasElement;
     this.canvas.width = 400;
     this.canvas.height = 400;
-    this.canvasCtx = this.canvas.getContext('2d');
+    const ctx = this.canvas.getContext('2d');
+    if (!ctx) return;
+    this.canvasCtx = ctx;
   }
 
-  private render() {
+  protected render() {
     return html`<canvas></canvas>`;
   }
 }
