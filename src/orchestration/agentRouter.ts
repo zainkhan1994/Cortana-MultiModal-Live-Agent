@@ -11,7 +11,7 @@ const MULTIMODAL_PATTERN =
 
 export const routeAgentTask = (userGoal: string): RoutingDecision => {
   const normalizedGoal = userGoal.trim();
-  if (normalizedGoal && MULTIMODAL_PATTERN.test(normalizedGoal)) {
+  if (MULTIMODAL_PATTERN.test(normalizedGoal)) {
     return {
       primary: 'live-agent',
       secondary: 'creative-storyteller',
