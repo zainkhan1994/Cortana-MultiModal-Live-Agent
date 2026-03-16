@@ -25,14 +25,6 @@ const normalizeTranscript = (text: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'gdm-live-audio': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
-
 const App: React.FC = () => {
   const workflow = useWorkflowCoordinator();
   const { stage, tasks, artifacts, onTaskStateChange, onArtifactCreated } = workflow;
