@@ -21,6 +21,7 @@ export class GdmLiveAudio extends LitElement {
   @state() useSmoothAnimations = true;
   @state() showSettings = false;
   @state() focusMode = false;
+  @state() apiKeyMissing = false;
 
   private client: GoogleGenAI;
   private session: Session;
@@ -337,6 +338,53 @@ export class GdmLiveAudio extends LitElement {
           font-size: 22px;
         }
       }
+
+      .api-key-banner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 40;
+        width: min(480px, calc(100% - 48px));
+        border: 1px solid rgba(255, 100, 116, 0.55);
+        border-radius: 16px;
+        padding: 24px 28px;
+        background: rgba(40, 8, 18, 0.85);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        color: #ffc8cc;
+        font-family: inherit;
+      }
+
+      .api-key-banner h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+        color: #ff7080;
+        letter-spacing: 0.04em;
+      }
+
+      .api-key-banner p {
+        margin: 0 0 14px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #ffb0b8;
+      }
+
+      .api-key-banner code {
+        background: rgba(53, 210, 255, 0.13);
+        border-radius: 4px;
+        padding: 1px 6px;
+        color: #7de8ff;
+        font-size: 12px;
+      }
+
+      .api-key-banner .steps {
+        margin: 0;
+        padding: 0 0 0 18px;
+        font-size: 12px;
+        color: #f0a0aa;
+        line-height: 1.8;
+      }
   `;
 
   constructor() {
@@ -386,10 +434,23 @@ export class GdmLiveAudio extends LitElement {
   }
 
   private async initClient() {
+    const apiKey = (import.meta.env.VITE_GEMINI_API_KEY || '').trim();
+    if (!apiKey) {
+      this.apiKeyMissing = true;
+      this.error =
+        'VITE_GEMINI_API_KEY is not configured. ' +
+        'Set it as a GitHub Actions secret (Settings → Secrets → VITE_GEMINI_API_KEY) ' +
+        'and re-deploy to enable live audio.';
+      this.status = 'No API key — live session disabled.';
+      this.emitLiveEvent('live-agent:session-status', {
+        connected: false,
+        message: 'API key not configured',
+      });
+      return;
+    }
+
     this.initAudio();
-    this.client = new GoogleGenAI({
-      apiKey: import.meta.env.VITE_GEMINI_API_KEY,
-    });
+    this.client = new GoogleGenAI({ apiKey });
 
     this.outputNode.connect(this.outputAudioContext.destination);
     this.initSession();
@@ -669,6 +730,21 @@ Key Quotes/Philosophy:
           </button>
         </div>
 
+        ${this.apiKeyMissing ? html`
+          <div class="api-key-banner">
+            <h2>⚠ API Key Not Configured</h2>
+            <p>
+              <code>VITE_GEMINI_API_KEY</code> is missing. The 3D visualizer is
+              still active, but live audio and voice features are disabled.
+            </p>
+            <ol class="steps">
+              <li>Go to your repo → <strong>Settings → Secrets and variables → Actions</strong></li>
+              <li>Add a new secret named <code>VITE_GEMINI_API_KEY</code> with your Gemini API key</li>
+              <li>Re-run the <em>Deploy to GitHub Pages</em> workflow</li>
+            </ol>
+          </div>
+        ` : ''}
+
         ${this.showSettings ? html`
           <div class="settings-backdrop" @click=${() => (this.showSettings = false)}></div>
           <div class="settings-panel">
@@ -695,7 +771,7 @@ Key Quotes/Philosophy:
           <button class="control-circle" id="resetButton" @click=${this.reset} ?disabled=${this.isRecording} title="Reset session">
             <span class="icon refresh"></span>
           </button>
-          <button class="control-circle main" id="startButton" @click=${this.startRecording} ?disabled=${this.isRecording} title="Start recording">
+          <button class="control-circle main" id="startButton" @click=${this.startRecording} ?disabled=${this.isRecording || this.apiKeyMissing} title="${this.apiKeyMissing ? 'API key required' : 'Start recording'}">
             <span class="icon record"></span>
           </button>
           <button class="control-circle" id="generateButton" @click=${() => this.emitLiveEvent('live-agent:trigger-generation', {})} ?disabled=${!this.isRecording} title="Generate Visuals from Context">
