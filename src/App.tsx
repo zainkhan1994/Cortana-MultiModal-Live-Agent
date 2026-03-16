@@ -195,7 +195,36 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const cloudStatus = useMemo(() => {
+  useEffect(() => {
+    let active = true;
+    let timerId: number | undefined;
+
+    const generateAmbientMedia = async () => {
+      if (!active || !liveConnected || !storytellerRef.current) return;
+      try {
+        await storytellerRef.current.generateFromPrompt("An ambient, cinematic space scene from The Expanse, realistic, highly detailed, sci-fi");
+      } catch (e) {
+        console.error("Ambient generation failed", e);
+      }
+      
+      if (active && liveConnected) {
+        timerId = window.setTimeout(generateAmbientMedia, 30000); // 30s delay between prompts
+      }
+    };
+
+    if (liveConnected) {
+      generateAmbientMedia();
+    }
+
+    return () => {
+      active = false;
+      if (timerId) {
+        window.clearTimeout(timerId);
+      }
+    };
+  }, [liveConnected]);
+
+    const cloudStatus = useMemo(() => {
     if (!compliance.cloudServiceEnabled) {
       return {
         mode: 'local' as const,
