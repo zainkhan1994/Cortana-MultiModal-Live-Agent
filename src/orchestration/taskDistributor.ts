@@ -3,7 +3,7 @@ import { WorkflowTask } from '../shared/types/workflow.types';
 
 export const createTask = (agent: AgentKind, goal: string): WorkflowTask => {
   return {
-    id: `${agent}-${Date.now()}`,
+    id: `${agent}-${crypto.randomUUID()}`,
     agent,
     goal,
     status: 'queued',

@@ -30,7 +30,7 @@ export const StorytellerWorkspace = forwardRef<StorytellerWorkspaceHandle, Story
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
   const createTask = (goal: string): WorkflowTask => ({
-    id: `story-${Date.now()}`,
+    id: `story-${crypto.randomUUID()}`,
     agent: 'creative-storyteller',
     goal,
     status: 'running',
@@ -64,7 +64,7 @@ export const StorytellerWorkspace = forwardRef<StorytellerWorkspaceHandle, Story
         throw new Error(`Cloud image persistence failed: ${persistedImage.message}`);
       }
       onArtifactCreated({
-        id: `artifact-image-${Date.now()}`,
+        id: `artifact-image-${crypto.randomUUID()}`,
         kind: 'image',
         producer: 'creative-storyteller',
         payload: {
@@ -77,7 +77,7 @@ export const StorytellerWorkspace = forwardRef<StorytellerWorkspaceHandle, Story
       });
       if (imageLocalOnly) {
         onArtifactCreated({
-          id: `artifact-status-image-local-${Date.now()}`,
+          id: `artifact-status-image-local-${crypto.randomUUID()}`,
           kind: 'status-update',
           producer: 'creative-storyteller',
           payload: {
@@ -101,7 +101,7 @@ export const StorytellerWorkspace = forwardRef<StorytellerWorkspaceHandle, Story
         throw new Error(`Cloud video persistence failed: ${persistedVideo.message}`);
       }
       onArtifactCreated({
-        id: `artifact-video-${Date.now()}`,
+        id: `artifact-video-${crypto.randomUUID()}`,
         kind: 'video',
         producer: 'creative-storyteller',
         payload: {
@@ -114,7 +114,7 @@ export const StorytellerWorkspace = forwardRef<StorytellerWorkspaceHandle, Story
       });
       if (videoLocalOnly) {
         onArtifactCreated({
-          id: `artifact-status-video-local-${Date.now()}`,
+          id: `artifact-status-video-local-${crypto.randomUUID()}`,
           kind: 'status-update',
           producer: 'creative-storyteller',
           payload: {

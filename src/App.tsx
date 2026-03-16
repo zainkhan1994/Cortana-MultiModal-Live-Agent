@@ -71,13 +71,20 @@ const App: React.FC = () => {
       if (decision.secondary === 'creative-storyteller') {
         const creativeTask = createTask('creative-storyteller', trimmedGoal);
         onTaskStateChange({ ...creativeTask, status: 'queued' });
-        await storytellerRef.current?.generateFromPrompt(trimmedGoal);
-        onTaskStateChange({ ...liveTask, status: 'completed' });
+        try {
+          await storytellerRef.current?.generateFromPrompt(trimmedGoal);
+          onTaskStateChange({ ...creativeTask, status: 'completed' });
+          onTaskStateChange({ ...liveTask, status: 'completed' });
+        } catch (err: any) {
+          onTaskStateChange({ ...creativeTask, status: 'failed' });
+          onTaskStateChange({ ...liveTask, status: 'failed' });
+          throw err;
+        }
         return;
       }
 
       onArtifactCreated({
-        id: `artifact-status-${Date.now()}`,
+        id: `artifact-status-${crypto.randomUUID()}`,
         kind: 'status-update',
         producer: 'orchestrator',
         payload: {
@@ -100,7 +107,7 @@ const App: React.FC = () => {
       if (!text || !isFinal) return;
 
       onArtifactCreated({
-        id: `artifact-transcript-${Date.now()}`,
+        id: `artifact-transcript-${crypto.randomUUID()}`,
         kind: 'transcript',
         producer: 'live-agent',
         payload: { text },
@@ -116,7 +123,7 @@ const App: React.FC = () => {
       if (lastRoutedTranscript.current === normalized) return;
       if (now - lastRouteAt.current < AUTO_ROUTE_COOLDOWN_MS) {
         onArtifactCreated({
-          id: `artifact-status-cooldown-${Date.now()}`,
+          id: `artifact-status-cooldown-${crypto.randomUUID()}`,
           kind: 'status-update',
           producer: 'orchestrator',
           payload: {
@@ -134,7 +141,7 @@ const App: React.FC = () => {
         await handleRouteRequest(text, 'voice');
       } catch (error: any) {
         onArtifactCreated({
-          id: `artifact-status-route-error-${Date.now()}`,
+          id: `artifact-status-route-error-${crypto.randomUUID()}`,
           kind: 'status-update',
           producer: 'orchestrator',
           payload: {
@@ -151,7 +158,7 @@ const App: React.FC = () => {
       const text = customEvent.detail?.text?.trim();
       if (!text) return;
       onArtifactCreated({
-        id: `artifact-model-text-${Date.now()}`,
+        id: `artifact-model-text-${crypto.randomUUID()}`,
         kind: 'interleaved-output',
         producer: 'live-agent',
         payload: { text },
