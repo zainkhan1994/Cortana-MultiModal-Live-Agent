@@ -1,0 +1,8 @@
+{
+  "name": "ORB Integrated Agent Platform",
+  "description": "Realtime Live Agent + Creative Storyteller platform powered by Gemini multimodal APIs.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "prompt": ""
+}
