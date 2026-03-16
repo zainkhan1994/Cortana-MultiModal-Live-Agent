@@ -386,6 +386,14 @@ export class GdmLiveAudio extends LitElement {
   }
 
   private async initClient() {
+    if (!import.meta.env.VITE_GEMINI_API_KEY) {
+      this.updateError(
+        'VITE_GEMINI_API_KEY is not set. ' +
+        'For local dev, add it to your .env file. ' +
+        'For GitHub Pages, add it in Settings → Secrets and variables → Actions, then redeploy.',
+      );
+      return;
+    }
     this.initAudio();
     this.client = new GoogleGenAI({
       apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -497,6 +505,8 @@ Key Quotes/Philosophy:
         },
       });
     } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      this.updateError(`Session error: ${msg}`);
       console.error(e);
     }
   }
